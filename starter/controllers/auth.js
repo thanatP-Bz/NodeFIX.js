@@ -1,5 +1,11 @@
+const User = require("../models/User");
+const { BadRequestError } = require("../errors");
+
 const register = async (req, res) => {
-  res.send("rigester");
+  const user = await User.create({ ...req.body });
+  const token = user.createJWT();
+
+  res.status(201).json({ user: { name: user.getName() }, token });
 };
 
 const login = async (req, res) => {

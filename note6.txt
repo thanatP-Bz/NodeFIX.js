@@ -1,0 +1,56 @@
+const req = require("express/lib/request")
+
+//how to create API
+use async await 
+-import shcema in the function
+const user = await User.create({reg.body})
+
+//the way to check the error
+const {name, email, password} = req.body;
+if(!name || !email || !password)  {
+    throw new Error("please provide name, email, password")
+}
+
+***do not store password to the DB as a string***
+how to harshing password use bcript.js random bytes
+import bcript.js
+
+const salt = await bcript.genSalt(10)
+const hashedPassword = await bcript.hash(password,salt)
+const tempUser = {name, email, password: hashedPassword}
+
+const user = await User.create({...tempUser})
+
+//mongoose middleware
+import bcript to model
+
+UserSchema.pre("save", async function(next) {
+    const salt = await bcript.genSalt(10)
+this.password = await bcript.hash(this.password,salt)
+next()
+})
+
+//jwt
+const user = await User.create({...req.body})
+const token = jwt.sign({userId: user._id, name: user.name})
+res.status(200).json({user:{name: user.name}, token}) // how to acess name
+
+//how to genrate name in shcema
+UserSchema.methods.getName = function() {
+    return this.name
+}
+
+//invoke user.getNsame() instead of user.name
+res.status(200).json({user:{name: user.getName()}, token}) // how to acess name
+
+//also we can set jwt in model
+UserSchema.methods.createJWT = function () {
+  return jwt.sign({userId: this._id, name:this.anme }, "jwtsecret", {expiresIn: "30d"})
+}
+
+//back to auth
+const user = await User.create({...req.body})
+const token = user.createJWT()
+res.status(200).json({user:{name: user.name}, token})
+
+//we can get token from allkeygenerator website
