@@ -54,3 +54,25 @@ const token = user.createJWT()
 res.status(200).json({user:{name: user.name}, token})
 
 //we can get token from allkeygenerator website
+
+//how to check the user exist
+const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequestError("Please provide email and password");
+  }
+  
+  const user = await User.findOne();
+
+  if (!user) {
+    throw new UnauthenticatedError("Invalid credential");
+  }
+
+  const token = user.createJWT();
+  res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+
+//How to compare the password
+ UserSchema.methods.comparePassword = async function (cadidatePassword) {
+  const isMatch = await bcript.compare(cadidatePassword, this.password);
+  return isMatch;
+};

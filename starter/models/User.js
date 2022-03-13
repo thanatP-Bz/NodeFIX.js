@@ -31,12 +31,17 @@ UserSchema.methods.getName = function () {
 
 UserSchema.methods.createJWT = function () {
   return jwt.sign(
-    { userId: this._id, name: this.anme },
+    { userId: this._id, name: this.name },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_LIFETIME,
     }
   );
+};
+
+UserSchema.methods.comparePassword = async function (cadidatePassword) {
+  const isMatch = await bcript.compare(cadidatePassword, this.password);
+  return isMatch;
 };
 
 UserSchema.pre("save", async function () {
