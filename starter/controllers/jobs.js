@@ -1,5 +1,12 @@
+const Jobs = require("../models/Job");
+const { StatusCodes } = require("http-status-codes");
+const { BadRequestError, NotFoundError } = require("../errors");
+
 const getAllJobs = async (req, res) => {
-  console.log("get all jobs");
+  const jobs = await Jobs.find({ createdBy: req.user.userId }).sort(
+    "createdAt"
+  );
+  res.status(StatusCodes.OK).json({ jobs });
 };
 
 const getJob = async (req, res) => {
@@ -7,7 +14,9 @@ const getJob = async (req, res) => {
 };
 
 const createJobs = async (req, res) => {
-  console.log("create jobs");
+  req.body.createdBy = req.user.userId;
+  const job = await Jobs.create(req.body);
+  res.status(StatusCodes.CREATED).json({ job });
 };
 
 const updateJobs = async (req, res) => {

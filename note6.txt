@@ -76,3 +76,47 @@ const { email, password } = req.body;
   const isMatch = await bcript.compare(cadidatePassword, this.password);
   return isMatch;
 };
+
+//set the auth middleware in authentication.js do not forget to export the auth and invoke next
+const auth = async (req, res, next) => {
+  const authHeaders = req.headers.authorization;
+
+  if (!authHeaders || !authHeaders.startsWith("Bearer")) {
+    throw new UnauthenticatedError("Authenticaiton invalid");
+  }
+
+  const token = authHeaders.split(" ")[1];
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = { userId: payload.userId, name: payload.name };
+  } catch (error) {
+    throw new UnauthenticatedError("Authenticaition invalid");
+  }
+};
+
+//use auth for routes middleware
+app.use("/api/v1/jobs", authenticateUser,jobRouter);
+
+//set the jobs model
+-create job Schema do not forget to put createdBy to refer to the file that asscociate with
+createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      require: [true, "please provide user"],
+    },
+  },
+  { timeStamps: true }
+
+  -go to the controller import jobs Schema 
+
+  -then create jobs
+  const createJobs = async (req, res) => {
+  req.body.createdBy = req.user.userId;
+  const job = await Jobs.create(req.body);
+  res.status(StatusCodes.CREATED).json({ job });
+};
+
+//get all jobs
+const jobs = await Jobs.find({createdBy: req.user.userID}).sort("createdAt")
+res.status(ok).json({jobs})
