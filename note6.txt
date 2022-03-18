@@ -198,3 +198,17 @@ const errorHandlerMiddleware = (err, req, res, next) => {
 };
 
 module.exports = errorHandlerMiddleware;
+
+ //name error
+  if (err.name === "ValidationError") {
+    customError.msg = Object.values(err.errors)
+      .map((item) => item.message)
+      .join(",");
+    customError.StatusCode = 400;
+  }
+
+  //cast err
+  if (err.name === "CastError") {
+    customError.msg = `No item found with id: ${err.value}`;
+    customError.StatusCode = 404;
+  }
