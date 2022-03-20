@@ -23,3 +23,41 @@ module.exports = mongoose.model("product", ProductSchema);
 //set up the route
 
 //go to app import product routers
+
+//set up create product
+req.body 
+product = await Product.create(req.body)
+
+//send file to the postman
+use express-fileupload
+form-data > image > select file 
+
+//import file upload and invoke it 
+to see the image > req.files
+move function will move image to store 
+-import path
+-acess to file req.files.image;
+-path.join(__dirname, "file/" + `${productImage.name}`)
+-move to the folder await productImage.mv(imagePath)
+-make sure public floder available
+return res.status(StatusCodes.OK).json({image: {src: `/uploads/${productImage.name}`}})
+-in app.js app.use(express.static("./public)) take the link to local host to test
+
+//get the product
+const product = await Product.find({});
+  res.status(StatusCodes.OK).json({ product });
+
+//check the image
+ if (!req.files) {
+    throw new CustomError.BadRequestError("No File Uploaded");
+  }
+  const productImage = req.files.image;
+
+  if (!productImage.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please Upload Image");
+  }
+
+  const maxSize = 1024 * 1024;
+  if (productImage.size > maxSize) {
+    throw new CustomError.BadRequestError("Please Upload Image Small than 1KB");
+  }
