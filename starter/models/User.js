@@ -32,9 +32,26 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.methods.createJWT = function () {
-  return jwt.sign({ userId: this._id, name: this.name }, "jwtsecret", {
-    expiresIn: "30d",
-  });
+  return jwt.sign(
+    { userId: this._id, name: this.name, email: this.email },
+    "jwtsecret",
+    {
+      expiresIn: "30d",
+    }
+  );
+};
+
+UserSchema.methods.comparePassword = async function (cadidatePassword) {
+  const isMatch = await bcrypt.compare(cadidatePassword, this.password);
+  return isMatch;
+};
+
+UserSchema.methods.getName = function () {
+  return this.name;
+};
+
+UserSchema.methods.getEmail = function () {
+  return this.email;
 };
 
 module.exports = mongoose.model("User", UserSchema);
