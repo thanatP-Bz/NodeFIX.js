@@ -3,6 +3,9 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 
+//authenticateUser
+const authenticateUser = require("./middleware/authentication");
+
 //connect to DB
 const connectDB = require("./db/connect");
 
@@ -15,7 +18,7 @@ const jobRouter = require("./routes/jobs");
 
 app.use(express.json());
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", jobRouter);
+app.use("/api/v1/jobs", authenticateUser, jobRouter);
 // extra packages
 
 // routes

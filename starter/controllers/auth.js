@@ -8,7 +8,7 @@ const register = async (req, res) => {
 
   res
     .status(StatusCodes.CREATED)
-    .json({ user: { name: user.getName(), email: user.getEmail() }, token });
+    .json({ user: { name: user.getName() }, token });
 };
 
 const login = async (req, res) => {
@@ -18,7 +18,7 @@ const login = async (req, res) => {
     throw new BadRequestError("Please provide email and password");
   }
 
-  const user = await User.findOne({});
+  const user = await User.findOne({ email });
   const token = user.createJWT();
 
   if (!user) {
@@ -30,7 +30,9 @@ const login = async (req, res) => {
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError("password does not correct");
   }
-  res.status(StatusCodes.OK).json({ name: { name: user.getName() }, token });
+  res
+    .status(StatusCodes.OK)
+    .json({ name: { name: user.getName(), email: user.getEmail() }, token });
 };
 
 module.exports = {
